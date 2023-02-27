@@ -293,6 +293,10 @@ a:hover, a:active, a:focus {
   background: url('../images/HTB/LogForge/LogForge.png') no-repeat;
   height:100vh;
 }
+.main-post-jet {
+  background: url('../images/HTB/Jet/background.png') no-repeat;
+  height:100vh;
+}
 
 .main-gallery {
   background: url('../images/contact-bg.jpg') no-repeat;
@@ -505,6 +509,34 @@ a:hover, a:active, a:focus {
   margin-right: 4px;
 }
 
+.blog-single-post-thumb span img{
+  max-width: 750px;
+}
+
+.pre-code{
+  border-color: transparent;
+  background-color: #181A1B;
+  overflow-x: auto;
+  max-width: 750px;
+  color: #f0f0f0;
+  border-left: 5px solid #eee;
+}
+
+.code{
+  color: #f0f0f0;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+}
+
+.toolref{
+  color: rgb(13, 99, 156);
+}
+.pre{
+  color: transparent;
+}
+.command{
+  color: #73DACA;
+}
 .blog-post-des blockquote {
   margin: 22px;
   color: #f0f0f0;
@@ -712,6 +744,21 @@ a:hover, a:active, a:focus {
 /* show active nested list */
 .bs-docs-sidebar .nav>.active>ul.nav {
   display: block;           
+}
+
+/*--------------------------------------- 
+    COLORS FOR BLOGs
+-----------------------------------------*/
+.a-green{
+  color: #7ECC75;
+}
+
+.a-red{
+  color: #DE5E5D;
+}
+
+.a-blue{
+  color: #94B7FA;
 }
 
 /*---------------------------------------
