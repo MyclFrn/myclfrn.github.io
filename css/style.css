@@ -760,6 +760,15 @@ a:hover, a:active, a:focus {
 .a-blue{
   color: #94B7FA;
 }
+.a-gray{
+  color: #686868;
+}
+.a-yellow{
+  color: #e6e956;
+}
+.a-purple{
+  color: #e956d5;
+}
 
 /*---------------------------------------
    Footer section              
